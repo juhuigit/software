@@ -10,9 +10,16 @@ public class ForecastDisplay implements Observer, DisplayElement {
 		weatherData.registerObserver(this);
 	}
 
-	public void update(float temp, float humidity, float pressure) {
-        lastPressure = currentPressure;
-		currentPressure = pressure;
+//	public void update(float temp, float humidity, float pressure) {
+//        lastPressure = currentPressure;
+//		currentPressure = pressure;
+//
+//		display();
+//	}
+
+	public void update() {
+		lastPressure = currentPressure;
+		currentPressure = weatherData.getPressure();
 
 		display();
 	}
