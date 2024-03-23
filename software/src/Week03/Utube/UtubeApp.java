@@ -12,5 +12,8 @@ public class UtubeApp {
         juhuiChannal.setPrice(200);
         juhuiChannal.removeSubscriber(ks2);
         juhuiChannal.setPrice(300);
+
+        Subscriber es1 = new EnglishSubscriber("Pikachu", juhuiChannal);
+        juhuiChannal.setPrice(500);
     }
 }
