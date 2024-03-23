@@ -1,4 +1,4 @@
-package Week03;
+package Week03.Weather;
 
 public class WeatherStationHeatIndex {
 

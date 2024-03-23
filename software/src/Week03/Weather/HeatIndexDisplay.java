@@ -1,4 +1,4 @@
-package Week03;
+package Week03.Weather;
 
 public class HeatIndexDisplay implements Observer, DisplayElement {
 	float heatIndex = 0.0f;

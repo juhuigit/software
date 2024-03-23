@@ -1,4 +1,4 @@
-package Week03;
+package Week03.Weather;
 	
 public class CurrentConditionsDisplay implements Observer, DisplayElement {
 	private float temperature;
