@@ -1,4 +1,4 @@
-package week01.Character;
+package week02.Character;
 
 public class Main {
     public static void main(String[] args) {

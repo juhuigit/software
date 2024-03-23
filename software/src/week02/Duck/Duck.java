@@ -1,4 +1,4 @@
-package week01.Duck;
+package week02.Duck;
 
 public abstract class Duck {
     // 행동 인터페이스 형식의 레퍼런스 변수 2개 선언

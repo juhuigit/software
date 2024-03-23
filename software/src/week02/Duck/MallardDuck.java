@@ -1,4 +1,4 @@
-package week01.Duck;
+package week02.Duck;
 
 public class MallardDuck extends Duck{
     public MallardDuck() {

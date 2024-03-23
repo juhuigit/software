@@ -1,4 +1,4 @@
-package week01.Character;
+package week02.Character;
 
 public interface WeaponBehavior {
     public void useWeapon();

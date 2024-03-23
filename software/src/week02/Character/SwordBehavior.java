@@ -1,4 +1,4 @@
-package week01.Character;
+package week02.Character;
 
 public class SwordBehavior implements WeaponBehavior{
     @Override
