@@ -7,14 +7,30 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.SimpleTimeZone;
 
-interface Quackable {
+interface Quackable extends QuackObservable { // 옵저버로 확장
     public void quack();
 }
 
 class MallarDuck implements Quackable {
+    Observable obsevable;
+
+    public MallarDuck() {
+        obsevable = new Observable(this); // 컴포지션, 강한 결합관계, 생성주기가 같음.
+    }
     @Override
     public void quack() {
         System.out.println("꽥꽥");
+        norifyObservers(); // quack 메소드가 실행되면 옵저버들에게 알린다.
+    }
+
+    @Override
+    public void registerObserver(Observer observer) {
+        obsevable.registerObserver(observer);
+    }
+
+    @Override
+    public void norifyObservers() {
+        obsevable.norifyObservers();
     }
 }
 
@@ -147,6 +163,43 @@ class Flock implements Quackable { // 컴포지트 패턴
         }
     }
 }
+
+interface Observer {
+    public void update(QuackObservable duck);
+}
+
+// 옵저버 클래스
+class Quacklogist implements Observer {
+    @Override
+    public void update(QuackObservable duck) {
+        System.out.println("꽥꽥학자: " + duck + " 가 방금 소리냈다.");
+    }
+}
+interface QuackObservable {
+    public void registerObserver(Observer observer);
+    public void norifyObservers();
+}
+
+class Observable implements QuackObservable {
+    List<Observer> observers = new ArrayList<Observer>();
+    QuackObservable duck; // has-a 연관관계
+
+    public Observable(QuackObservable duck) {
+        this.duck = duck;
+    }
+
+    public void registerObserver(Observer observer) {
+        observers.add(observer);
+    }
+
+    public void notifyObservers() {
+        Iterator iterator = observers.iterator();
+        while(iterator.hasNext()) {
+            Observer observer = iterator.next();
+            observer.update(duck);
+        }
+    }
+}
 class DuckSimulator {
     public static void main(String[] args) {
         DuckSimulator simulator = new DuckSimulator();
@@ -188,6 +241,9 @@ class DuckSimulator {
         flockOfMallards.add(mallardFour);
 
         flockOfDucks.add(flockOfMallards); // 말라드 덕 무리를 오리 무리에 넣기(트리 구조)
+
+        Quacklogist quacklogist = new Quacklogist(); // 오리 무리의 옵저버
+        flockOfDucks.registerObserver(quacklogist);
 
         System.out.println("\n오리 시뮬레이션 게임 : 전체 무리");
         simulate(flockOfDucks);
