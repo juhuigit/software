@@ -80,11 +80,11 @@ class DuckSimulator {
     }
 
     void simulate() {
-        Quackable mallardDuck = new MallarDuck();
-        Quackable redheadDuck = new RedheadDuck();
-        Quackable duckCall = new DuckCall();
-        Quackable rubberDuck = new RubberDuck();
-        Quackable gooseDuck = new GooseAdapter(new Goose()); // 어뎁터 패턴으로 거위 컨트롤
+        Quackable mallardDuck = new QuackCounter(new MallarDuck()); // 데코레이터로 감싸기
+        Quackable redheadDuck = new QuackCounter(new RedheadDuck());
+        Quackable duckCall = new QuackCounter(new DuckCall());
+        Quackable rubberDuck = new QuackCounter(new RubberDuck());
+        Quackable gooseDuck = new QuackCounter(new GooseAdapter(new Goose())); // 어뎁터 패턴으로 거위 컨트롤
 
         System.out.println("\n오리 시뮬레이션 게임");
 
@@ -93,6 +93,9 @@ class DuckSimulator {
         simulate(duckCall);
         simulate(rubberDuck);
         simulate(gooseDuck); // 어뎁트 패턴
+
+        System.out.println("오리가 소리 낸 횟수: " +
+                QuackCounter.getQuacks() + " 번");
     }
 
     void simulate(Quackable duck) {
