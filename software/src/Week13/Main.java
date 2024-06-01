@@ -73,18 +73,73 @@ class QuackCounter implements Quackable {
         return numberOfQuacks;
     }
 }
+
+abstract class AbstractDuckFactory { // 추상팩토리 패턴 (의존성 역전의 원칙, 추상화된 존재에 의존)
+    public abstract Quackable createMallardDuck();
+    public abstract Quackable createRedheadDuck();
+    public abstract Quackable createDuckCall();
+    public abstract Quackable createRubberDuck();
+}
+
+class DuckFactory extends AbstractDuckFactory {
+    @Override
+    public Quackable createMallardDuck() {
+        return new MallarDuck(); // 객체 생성
+    }
+
+    @Override
+    public Quackable createRedheadDuck() {
+        return new RubberDuck();
+    }
+
+    @Override
+    public Quackable createDuckCall() {
+        return new DuckCall();
+    }
+
+    @Override
+    public Quackable createRubberDuck() {
+        return new RubberDuck();
+    }
+}
+
+class CountingDuckFactory extends AbstractDuckFactory { // 카운팅하는 팩토리
+    @Override
+    public Quackable createMallardDuck() {
+        return new QuackCounter(new MallarDuck()); // 객체 생성 시 데코레이터 랩핑 되어있음
+    }
+
+    @Override
+    public Quackable createRedheadDuck() {
+        return new QuackCounter(new RubberDuck());
+    }
+
+    @Override
+    public Quackable createDuckCall() {
+        return new QuackCounter(new DuckCall());
+    }
+
+    @Override
+    public Quackable createRubberDuck() {
+        return new QuackCounter(new RubberDuck());
+    }
+}
 class DuckSimulator {
     public static void main(String[] args) {
         DuckSimulator simulator = new DuckSimulator();
-        simulator.simulate();
+        AbstractDuckFactory duckFactory = new CountingDuckFactory(); // 팩토리 생성
+
+        simulator.simulate(duckFactory);
     }
 
-    void simulate() {
-        Quackable mallardDuck = new QuackCounter(new MallarDuck()); // 데코레이터로 감싸기
-        Quackable redheadDuck = new QuackCounter(new RedheadDuck());
-        Quackable duckCall = new QuackCounter(new DuckCall());
-        Quackable rubberDuck = new QuackCounter(new RubberDuck());
-        Quackable gooseDuck = new QuackCounter(new GooseAdapter(new Goose())); // 어뎁터 패턴으로 거위 컨트롤
+    // simulate() 메소드는 AbstractDuckFactory를 인자로 받습니다.
+    // 객체의 인스턴스를 직접 생성하지 않고, 팩토리의 메소드로 생성합니다.
+    void simulate(AbstractDuckFactory duckFactory) {
+        Quackable mallardDuck = duckFactory.createMallardDuck(); // 메소드를 통한 객체 생성
+        Quackable redheadDuck = duckFactory.createRedheadDuck();
+        Quackable duckCall = duckFactory.createDuckCall();
+        Quackable rubberDuck = duckFactory.createRubberDuck();
+        Quackable gooseDuck = new GooseAdapter(new Goose()); // 어뎁터 패턴으로 거위 컨트롤
 
         System.out.println("\n오리 시뮬레이션 게임");
 
