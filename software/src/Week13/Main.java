@@ -2,6 +2,11 @@ package Week13;
 
 import week02.Duck.Duck;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.SimpleTimeZone;
+
 interface Quackable {
     public void quack();
 }
@@ -124,6 +129,24 @@ class CountingDuckFactory extends AbstractDuckFactory { // 카운팅하는 팩�
         return new QuackCounter(new RubberDuck());
     }
 }
+
+class Flock implements Quackable { // 컴포지트 패턴
+    List<Quackable> quackers = new ArrayList<Quackable>();
+
+    // Flock에 Quackable을 추가하는 메소드
+    public void add(Quackable quacker) {
+        quackers.add(quacker);
+    }
+    @Override
+    public void quack() {
+        // iterator 대신에 for-each 또는 for문으로 진행해도 됨.
+        Iterator<Quackable> iterator = quackers.iterator(); // 반복자 패턴
+        while (iterator.hasNext()) {
+            Quackable quacker = iterator.next();
+            quacker.quack();
+        }
+    }
+}
 class DuckSimulator {
     public static void main(String[] args) {
         DuckSimulator simulator = new DuckSimulator();
@@ -143,11 +166,40 @@ class DuckSimulator {
 
         System.out.println("\n오리 시뮬레이션 게임");
 
-        simulate(mallardDuck);
-        simulate(redheadDuck);
-        simulate(duckCall);
-        simulate(rubberDuck);
-        simulate(gooseDuck); // 어뎁트 패턴
+        Flock flockOfDucks = new Flock(); // quackable 객체 수용 가능
+
+        // 개별 객체들 4개
+        flockOfDucks.add(redheadDuck);
+        flockOfDucks.add(duckCall);
+        flockOfDucks.add(rubberDuck);
+        flockOfDucks.add(gooseDuck);
+
+        // 컴포지트 패턴 사용하기
+        Flock flockOfMallards = new Flock(); // 말라드 덕의 무리들 생성
+
+        Quackable mallardOne = duckFactory.createMallardDuck();
+        Quackable mallardTwo = duckFactory.createMallardDuck();
+        Quackable mallardThree = duckFactory.createMallardDuck();
+        Quackable mallardFour = duckFactory.createMallardDuck();
+
+        flockOfMallards.add(mallardOne);
+        flockOfMallards.add(mallardTwo);
+        flockOfMallards.add(mallardThree);
+        flockOfMallards.add(mallardFour);
+
+        flockOfDucks.add(flockOfMallards); // 말라드 덕 무리를 오리 무리에 넣기(트리 구조)
+
+        System.out.println("\n오리 시뮬레이션 게임 : 전체 무리");
+        simulate(flockOfDucks);
+
+        System.out.println("\n오리 시뮬레이션 게임 : 말라드덕 무리");
+        simulate(flockOfMallards);
+
+//        simulate(mallardDuck);
+//        simulate(redheadDuck);
+//        simulate(duckCall);
+//        simulate(rubberDuck);
+//        simulate(gooseDuck); // 어뎁트 패턴
 
         System.out.println("오리가 소리 낸 횟수: " +
                 QuackCounter.getQuacks() + " 번");
