@@ -4,12 +4,30 @@ interface Command {
     public void execute();
 }
 
+class NoCommand implements Command {
+    public void execute() { }
+}
+
 class Light {
     public void on(){
         System.out.println("조명을 켭니다.");
     }
     public void off(){
         System.out.println("조명을 끕니다.");
+    }
+}
+
+class Stereo {
+    public void on() {
+        System.out.println("오디오를 켭니다.");
+    }
+
+    public void setCD() {
+        System.out.println("CD를 재생합니다.");
+    }
+
+    public void setVolume(int volume) {
+        System.out.println("볼륨을 " + volume + "으로 지정합니다.");
     }
 }
 
@@ -61,6 +79,34 @@ class LightOnCommand implements Command { // Command 인터페이스를 구현�
     }
 }
 
+class LightOffCommand implements Command {
+    Light light;
+
+    public LightOffCommand(Light light) {
+        this.light = light;
+    }
+
+    @Override
+    public void execute() {
+        light.off();
+    }
+}
+
+class StereoOnWithCDCommand implements Command {
+    Stereo stereo;
+
+    public StereoOnWithCDCommand(Stereo stereo) {
+        this.stereo = stereo;
+    }
+
+    @Override
+    public void execute() {
+        stereo.on();
+        stereo.setCD();
+        stereo.setVolume(11);
+    }
+}
+
 // 인보커
 class SimpleRemoteControl {
     // 커맨드를 저장할 슬롯이 1개 있습니다.
@@ -79,6 +125,51 @@ class SimpleRemoteControl {
     // 지금 슬롯에 연결된 커맨드 객체의 execute() 메소드만 호출하면 됩니다.
     public void buttonWasPressed() {
         slot.execute();
+    }
+}
+
+// 리모컨
+// 7개의 ON, OFF 명령을 처리합니다.
+class RemoteControl {
+    // 각 명령은 배열에 저장
+    Command[] onCommands;
+    Command[] offCommands;
+
+    // 기본 생성자는 각 ON, OFF 배열의 인스턴스를 만들고 초기화합니다.
+    public RemoteControl() {
+        onCommands = new Command[7];
+        offCommands = new Command[7];
+
+        Command noCommand = new NoCommand();
+        for (int i = 0; i < 7; i++) {
+            onCommands[i] = noCommand;
+            offCommands[i] = noCommand;
+        }
+    }
+
+    // setCommand() 메소드는 슬롯 번호와 그 슬롯에 저장할 ON, OFF 커맨드 객체를 인자로 전달받습니다.
+    public void setCommand(int slot, Command onCommand, Command offCommand) {
+        // 각 커맨드 객체는 나중에 사용하기 편하게 onCommand와 offCommand 배열에 저장합니다.
+        onCommands[slot] = onCommand;
+        offCommands[slot] = offCommand;
+    }
+
+    // 사용자가 ON, OFF 버튼을 누르면 리모컨 하드웨어에서 각 버튼에 대응하는 메소드를 호출합니다.
+    public void onButtonWasPushed(int slot) {
+        onCommands[slot].execute();
+    }
+
+    public void offButtonWasPushed(int slot) {
+        offCommands[slot].execute();
+    }
+
+    public String toString() {
+        StringBuffer stringBuff = new StringBuffer();
+        stringBuff.append("\n------ 리모컨 ------\ㅜ");
+        for(int i = 0; i < onCommands.length; i++) {
+            stringBuff.append("[slot " + i + "] " + onCommands[i].getClass().getName() + "   " + offCommands[i].getClass().getName() + "\n");
+        }
+        return stringBuff.toString();
     }
 }
 public class RemoteControlTest { // 클라이언트
